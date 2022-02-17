@@ -67,6 +67,7 @@ interface interfaceRegistro{
 }
 
 interface tabelaMOBD{
+  col_id: number;
   col_registro: number;
   col_nome: string;
   col_inicio: Date;
@@ -159,6 +160,7 @@ const atenderOcorrencia: React.FC = () => {
     const numOS =  (document.getElementById('numOSID') as HTMLInputElement).value;
     const tabela = await api.get(`/maoobrabd/${numOS}`);
     setTabelaMO(tabela.data);  
+   
   },[])
     
   
@@ -254,6 +256,7 @@ const atenderOcorrencia: React.FC = () => {
     
     
   }
+
 
 
   async function buscaOcorrencia(num: string) {
@@ -936,6 +939,14 @@ const atenderOcorrencia: React.FC = () => {
     });
   }, [])
 
+  const exluirMO = useCallback(async (num: number) => {
+    await api.delete(`/maoobrabd/excluirmo/${num}`)
+
+    const numOS =  (document.getElementById('numOSID') as HTMLInputElement).value;
+    const tabela = await api.get(`/maoobrabd/${numOS}`);
+    setTabelaMO(tabela.data);  
+  }, [])
+
   
 
   
@@ -1104,7 +1115,7 @@ const atenderOcorrencia: React.FC = () => {
               </div> 
               <div className='cadastrosDiv'>
               {tabelaMO.map(registro => (
-                  <div className='listaDiv' key={registro.col_numos}>
+                  <div className='listaDiv' key={registro.col_id}>
                     <div className='conteudoLista'>
                       <label className='a'>TÉCNICO:</label>
                       <label className='b'>{registro.col_registro}</label>
@@ -1115,7 +1126,7 @@ const atenderOcorrencia: React.FC = () => {
                       <label className='a'>FIM:</label>
                       <label>{moment(registro.col_fim).format("DD/MM/YYYY")}-</label>
                       <label>{moment(registro.col_fim).format("HH:mm")}</label>
-                      <FiTrash2 />
+                      <FiTrash2 onClick={() => exluirMO(registro.col_id)}/>
                     </div>
                     <div className='separacaoDiv'></div>
                   </div>

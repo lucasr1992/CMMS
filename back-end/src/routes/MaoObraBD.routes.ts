@@ -20,7 +20,7 @@ maoObraBD.get('/:osnum', async (requisicao: Request, resposta: Response) => {
   const { osnum } = requisicao.params;
   const listaMaoObra = await getRepository(tbMaoObraBD)
     .createQueryBuilder('listaMaoObra')
-    .select('listaMaoObra.col_registro, colaboradorTB.col_nome, listaMaoObra.col_inicio, listaMaoObra.col_fim')
+    .select('listaMaoObra.col_id, listaMaoObra.col_registro, colaboradorTB.col_nome, listaMaoObra.col_inicio, listaMaoObra.col_fim')
     .innerJoin(tbCadastroColaborador, 'colaboradorTB', 'colaboradorTB.col_registro = listaMaoObra.col_registro')
     .where('listaMaoObra.col_numos = :osnum', {osnum})
     .getRawMany();
@@ -79,6 +79,24 @@ maoObraBD.post('/', async (request, response) => {
   });
   //delete Cadastrar.col_senha;
   return response.json(Cadastrar);
+});
+
+
+export class DeleteMOService{
+  async execute(num: string){
+   const DeletarMO = getRepository(tbMaoObraBD);
+   if(!(await DeletarMO.findOne(num))){
+      throw new AppError('Não existe', 400);
+   }
+   await DeletarMO.delete(num);
+  }
+}
+
+maoObraBD.delete('/excluirmo/:num', async (request: Request, response:Response) => {
+  const { num } = request.params
+  const DeletarMO = new DeleteMOService();
+  const Deletar = await DeletarMO.execute(num);
+  return response.status(204).end();
 });
 
 export default maoObraBD;
