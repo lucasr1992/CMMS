@@ -16,9 +16,6 @@ class repositorioMaoObraBD extends Repository<tbMaoObraBD> {
     return  maoObra || null;
   }
 }
-
-
-
 maoObraBD.get('/:osnum', async (requisicao: Request, resposta: Response) => {
   const { osnum } = requisicao.params;
   const listaMaoObra = await getRepository(tbMaoObraBD)
@@ -28,6 +25,60 @@ maoObraBD.get('/:osnum', async (requisicao: Request, resposta: Response) => {
     .where('listaMaoObra.col_numos = :osnum', {osnum})
     .getRawMany();
   return resposta.json(listaMaoObra)
+});
+
+
+maoObraBD.get('/colaborador/:registro', async (requisicao: Request, resposta: Response) => {
+  const { registro } = requisicao.params;
+  const colaborador = await getRepository(tbCadastroColaborador)
+  const Encontrar = await colaborador.findOne(registro);
+
+  return resposta.json(Encontrar)
+});
+
+
+
+interface registroMOINter{
+  col_registro: number;
+  col_inicio: Date;
+  col_fim: Date;
+  col_numos: number;
+}
+export class CadastroMOService{
+  public async execute({
+    col_registro,
+    col_inicio,
+    col_fim,
+    col_numos,
+   }: registroMOINter): Promise <tbMaoObraBD> {
+    const CadastroMORepository = getRepository(tbMaoObraBD);
+
+    const Cadastrar = CadastroMORepository.create({
+      col_registro,
+      col_inicio,
+      col_fim,
+      col_numos,
+    });
+    await CadastroMORepository.save(Cadastrar);
+    return Cadastrar;
+  }
+}
+maoObraBD.post('/', async (request, response) => {
+  const {
+    col_registro,
+    col_inicio,
+    col_fim,
+    col_numos,
+  } = request.body;
+  const cadastrarColaborador = new CadastroMOService();
+  const Cadastrar = await cadastrarColaborador.execute({
+    col_registro,
+    col_inicio,
+    col_fim,
+    col_numos,
+  });
+  //delete Cadastrar.col_senha;
+  return response.json(Cadastrar);
 });
 
 export default maoObraBD;

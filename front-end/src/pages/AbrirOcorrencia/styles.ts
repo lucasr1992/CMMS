@@ -299,8 +299,8 @@ export const FormularioOcorrencia = styled.div`
  }
 
   height: 100vh;
-  background-image: url(${LogoSoftware}), url(${LogoDivisao});
-  background-repeat: no-repeat, no-repeat;
-  background-size: 20%, 13%;
-  background-position: right bottom, left bottom;  
+  //background-image: url(${LogoSoftware}), url(${LogoDivisao});
+  //background-repeat: no-repeat, no-repeat;
+  //background-size: 20%, 13%;
+  //background-position: right bottom, left bottom;  
 `;

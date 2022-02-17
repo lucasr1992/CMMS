@@ -155,11 +155,13 @@ const atenderOcorrencia: React.FC = () => {
 
   const[tabelaMO, setTabelaMO] = useState<tabelaMOBD[]>([])
   
-  async function listaMaoObraBD(){
+  const listaMaoObraBD = useCallback(async() => {
     const numOS =  (document.getElementById('numOSID') as HTMLInputElement).value;
     const tabela = await api.get(`/maoobrabd/${numOS}`);
     setTabelaMO(tabela.data);  
-  }
+  },[])
+    
+  
 
   const chegadaQuery = useCallback(() => {
     const data = document.getElementById('dataChegadaId') as HTMLInputElement;
@@ -799,42 +801,100 @@ const atenderOcorrencia: React.FC = () => {
     cor: '#000000',
   })
 
+  const [corTempo, setCorTempo] = useState({
+    cor: '#000000',
+  })
 
-  async function regMaoObra(){
+  
+
+
+
+  const regMaoObra = useCallback(async() => {
     const registro = (document.getElementById('registroIDModal') as HTMLInputElement).value
     const nome = (document.getElementById('nomeIDModal') as HTMLInputElement).value
 
     const dataInicio = (document.getElementById('dataInicioModal') as HTMLInputElement).value
-    const dataFim = (document.getElementById('dataFimModal') as HTMLInputElement).value
     const horaInicio = (document.getElementById('horaInicioModal') as HTMLInputElement).value
+    const inicio = document.getElementById('inicioModal') as HTMLInputElement
+
+    const dataFim = (document.getElementById('dataFimModal') as HTMLInputElement).value
     const horaFim = (document.getElementById('horaFimModal') as HTMLInputElement).value
+    const fim = document.getElementById('fimModal') as HTMLInputElement
+    const os = (document.getElementById('numOSID') as HTMLInputElement).value
 
-    const inicio = (document.getElementById('horaInicioModal') as HTMLInputElement).value
-    const fim = (document.getElementById('horaFimModal') as HTMLInputElement).value
-
-
+    inicio.value = moment(dataInicio).format("MM/DD/YYYY") + ' ' + horaInicio;
+    fim.value = moment(dataFim).format("MM/DD/YYYY") + ' ' + horaFim;
     
+    const valInicio = new Date(inicio.value);
+    const valFim = new Date(fim.value);
+    const diferenca = moment(valFim, "MM/DD/YYYY HH:mm:ss").diff(moment(valInicio, "MM/DD/YYYY HH:mm:ss"));
+    const minutos = moment.duration(diferenca).asMinutes();
+    if(minutos >= 0 ){      
+      setCorTempo({
+        cor: '#000000',
+      })
+    }else{
+      setCorTempo({
+        cor: '#ff0000',
+      })
+      toast.error('Verifique Data e Hora');
+      return;
+    }  
 
     if(registro === ''){
       setCorInputReg({
         cor: '#ff0000',
       })
+      toast.error('Informe um Registro');
+      return;
     }else{
       setCorInputReg({
         cor: '#000000',
-      })
+      })      
     }
 
     if(nome === ''){
       setCorInputNome({
         cor: '#ff0000',
       })
+      toast.error('Registro Não Encontrado');
+      return;
     }else{
       setCorInputNome({
         cor: '#000000',
       })
     }
-  }
+
+    const dataInicioBD = moment(inicio.value).format("YYYY-MM-DD HH:mm");
+    const dataFimBD = moment(fim.value).format("YYYY-MM-DD HH:mm");
+
+    const regBD = JSON.parse(`{"col_registro":"${registro}"}`)
+    const inicioBD = JSON.parse(`{"col_inicio":"${dataInicioBD}"}`)
+    const fimBD = JSON.parse(`{"col_fim":"${dataFimBD}"}`)
+    const osBD = JSON.parse(`{"col_numos":"${os}"}`)
+
+    const object = {...regBD, ...inicioBD, ...fimBD, ...osBD};
+    const valoresInput = await api.post('/maoobrabd', object);
+
+    const numOS =  (document.getElementById('numOSID') as HTMLInputElement).value;
+    const tabela = await api.get(`/maoobrabd/${numOS}`);
+    setTabelaMO(tabela.data);  
+
+    (document.getElementById('registroIDModal') as HTMLInputElement).value = '';
+    (document.getElementById('nomeIDModal') as HTMLInputElement).value = '';
+    (document.getElementById('dataInicioModal') as HTMLInputElement).value='';
+    (document.getElementById('horaInicioModal') as HTMLInputElement).value='';
+    (document.getElementById('dataFimModal') as HTMLInputElement).value='';
+    (document.getElementById('horaFimModal') as HTMLInputElement).value='';
+    (document.getElementById('inicioModal') as HTMLInputElement).value = '';    
+    (document.getElementById('fimModal') as HTMLInputElement).value = '';
+   
+    
+
+
+  },[])
+
+  
 
   const focoInputReg = useCallback(() => {
     setCorInputReg({
@@ -849,6 +909,34 @@ const atenderOcorrencia: React.FC = () => {
       cor: '#000000',
     })
   }, [])
+
+
+  const focoInputTempo = useCallback(() => {
+    setCorTempo({
+      cor: '#ffa500',
+    })
+  }, [])
+  const blurInputTempo = useCallback(() => {
+    setCorTempo({
+      cor: '#000000',
+    })
+  }, [])
+
+  
+
+  const colaboradorMO = useCallback(async() => {
+    const registro =  (document.getElementById('registroIDModal') as HTMLInputElement).value;
+    const buscaColaborador = await api.get(`/maoobrabd/colaborador/${registro}`).then((response) => {
+      const resposta = response.data;
+      if(resposta != ''){
+        const nomeResponse = resposta['col_nome']; 
+        const nome = document.getElementById('nomeIDModal') as HTMLInputElement
+        nome.value = nomeResponse;
+      }  
+    });
+  }, [])
+
+  
 
   
 
@@ -1002,15 +1090,15 @@ const atenderOcorrencia: React.FC = () => {
               </div> 
               <div className='lancamento'>
                 <label>REGISTRO:</label>
-                <input id='registroIDModal' onFocus={focoInputReg} onBlur={blurInputReg} style={{borderColor: corInputReg.cor}} className='a' type='text' />
+                <input id='registroIDModal' onChange={colaboradorMO} autoComplete='off' onFocus={focoInputReg} onBlur={blurInputReg} style={{borderColor: corInputReg.cor}} className='a' type='text' />
                 <input id='nomeIDModal' style={{borderColor: corInputNome.cor}} className='a'  type='text' disabled/>
                 <label>INICIO:</label>
-                <input id='dataInicioModal' className='b' type='date'/>
-                <input id='horaInicioModal' className='c' type='time'/>
+                <input id='dataInicioModal' onFocus={focoInputTempo} onBlur={blurInputTempo} style={{borderColor: corTempo.cor}} className='b' type='date'/>
+                <input id='horaInicioModal' onFocus={focoInputTempo} onBlur={blurInputTempo} style={{borderColor: corTempo.cor}} className='c' type='time'/>
                 <input id='inicioModal' className='dataInicioModal' disabled/>
                 <label>FIM:</label>
-                <input id='dataFimModal' className='b' type='date'/>
-                <input id='horaFimModal' className='c' type='time'/> 
+                <input id='dataFimModal' onFocus={focoInputTempo} onBlur={blurInputTempo} style={{borderColor: corTempo.cor}} className='b' type='date'/>
+                <input id='horaFimModal' onFocus={focoInputTempo} onBlur={blurInputTempo} style={{borderColor: corTempo.cor}} className='c' type='time'/> 
                 <input id='fimModal' className='dataFimModal' disabled/>   
                 <Button onClick={regMaoObra}>REGISTRAR</Button>            
               </div> 

@@ -53,7 +53,7 @@ const InputRefAlt: React.FC<PropriedadesInput> = ({ name, icon: Icon, ...rest}) 
 
   return(
   <Container className="BordaInputRef" campoErradoEstilo={!!error} focoinputEstilo={focoinput} > {/*preenchidoinput={preenchidoinput}*/}  {/* focoinput precisa ser declarado no style na interface e falar que o Container usa a interface*/}
-    <ToastContainer theme="dark" position="top-right" pauseOnHover={false} autoClose={2000} closeOnClick={true} closeButton={false}/>
+   
    {Icon && <Icon size={20} />} 
     <input     
     onFocus={comFoco}  /* quando o input tiver com foco onFocus ele chama a função {}*/

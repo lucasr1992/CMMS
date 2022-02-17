@@ -14,10 +14,11 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   
-  div.formModal{
+  
+  form.formModal{
     box-shadow: 0px 0px 60px rgba(255, 255, 255, 0.65);
     border-radius: 10px;
-    background-color: #fff;
+    background-color: #fff;    
     width: 88%;
     height: 88%;
     color: black;
