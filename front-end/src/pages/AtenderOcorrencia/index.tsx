@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, HTMLInputTypeAttribute } from 'react';
+import React, { useEffect, useState, useCallback, useRef, HTMLInputTypeAttribute, ChangeEvent } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Container, BarraMenu, MenuContent} from './styles';
 import { ToastContainer, toast } from 'react-toastify';
@@ -16,6 +16,7 @@ import InputRefAlt from '../../componentes/InputRefAlt/index';
 import SelectRefAlt from '../../componentes/SelectRefAlt/index';
 import TextRefAlt from '../../componentes/TextAreaRefAlt/index'
 import Modal from './../../componentes/Modal/index';
+import { off } from 'process';
 
 
 
@@ -75,8 +76,32 @@ interface tabelaMOBD{
   col_numos: number;
 }
 
+
+
+interface spareType{
+  col_cod: string;
+}
+
+interface bomType{
+  col_peca: string;
+}
+
+interface sparePropsInter{
+  col_descricao: string;
+  col_status: string; 
+}
+
+interface spareKabanInter{
+  col_id: number;
+  col_peca: string;
+  col_quantidade: number;
+}
+
 const atenderOcorrencia: React.FC = () => { 
   const { num } = useParams<{num: string}>();
+
+  
+  
 
   const [maoObra, setMaoObra] = useState({
     modal: false
@@ -283,6 +308,7 @@ const atenderOcorrencia: React.FC = () => {
         col_raiz: informacoes.data.col_raiz,
         col_atuacao: informacoes.data.col_atuacao,
         col_obs: informacoes.data.col_obs,
+        
       });
 
       const chegada = moment(informacoes.data.col_chegada).format("MM/DD/YYYY HH:mm:ss");
@@ -631,10 +657,162 @@ const atenderOcorrencia: React.FC = () => {
     if( num !== undefined){
       buscaOcorrencia(num);
       inicioPagina(); 
-    }    
+    }  
+    loadSpare();
+    loadBOM();
+    
+
   }, [num]);
 
-  const formRef = useRef<FormHandles>(null);
+  
+
+//Modal Spare Parts ------------------------------------------------------------------------------------------------------------------------
+  const [modalSpare, setModalSpare] = useState({
+    modal: false
+  });
+
+  const modalSpareTrue = useCallback(() => {
+    setModalSpare({
+      modal: true
+    });    
+  }, []);  
+
+  const modalSpareFalse = useCallback(() => {
+    setModalSpare({
+      modal: false
+    })
+  }, []);
+
+  const [codBOM, setCodBOM] = useState([] as Array<bomType>);
+
+  const loadBOM = async() => {   
+    const maquinaBom = await api.get(`/atenderocorrencia/ocorrencia/${num}`);
+    const miMaquiBOM = maquinaBom.data.col_mi;
+    const respostaBom = await api.post(`/spare/bom/${miMaquiBOM}`);
+    setCodBOM(respostaBom.data);  
+   
+    
+  }
+
+  
+  const [suggestionsBOM, setSuggestionsBOM] = useState([] as Array<bomType>);
+
+  const onChangeSugestionBOM = (text: any) => {
+    if (text.length>0){ 
+      const matchesBOM = codBOM.filter( bom  => {
+        const regex = new RegExp(`${text}`, 'ig');         
+        return bom.col_peca.match(regex);
+      })
+      setInputStatus({
+        estado: true
+      });
+
+      setPropSpare({
+        col_descricao: '',
+        col_status: '',
+      });      
+      (document.getElementById('descriSpareID') as HTMLInputElement).value = '';
+      (document.getElementById('spareID') as HTMLInputElement).value = ''
+      setSuggestionsBOM(matchesBOM);
+      
+      
+    }  
+  }
+
+  const aparecerSuggestionBOM = (text: any) => {
+    setInputStatus({
+      estado: false
+    });
+    setSuggestionsBOM([]);
+    (document.getElementById('bomID') as HTMLInputElement).value = text;
+    encontrarSpare(text);
+    procurarBox(text);
+
+  }
+
+  const perderFocoSpareBOM = () =>{
+    setSuggestionsBOM([]);
+  }
+
+
+  const loadSpare = async() => {
+    const respostaSpare = await api.get('/spare');       
+    setCodSpare(respostaSpare.data); 
+  }
+
+  const [codSpare, setCodSpare] = useState([] as Array<spareType>);
+  const [suggestions, setSuggestions] = useState([] as Array<spareType>);
+
+  const onChangeSugestion = (text: any) => {
+    if (text.length>0){ 
+      const matches = codSpare.filter( spare  => {
+        const regex = new RegExp(`${text}`, 'ig');         
+        return spare.col_cod.match(regex);
+      })
+
+      setInputStatus({
+        estado: true
+      })
+      setPropSpare({
+        col_descricao: '',
+        col_status: '',
+      });
+      
+      (document.getElementById('descriSpareID') as HTMLInputElement).value = '';
+      (document.getElementById('bomID') as HTMLInputElement).value = '';
+      
+      
+      setSuggestions(matches)
+    }  
+  }
+
+  const aparecerSuggestion = (text: any) => {
+   setInputStatus({
+     estado: false
+   })
+    setSuggestions([]);
+    (document.getElementById('spareID') as HTMLInputElement).value = text;
+    encontrarSpare(text);
+    procurarBox(text);
+   
+  }
+
+  
+
+  const [propSpare, setPropSpare] = useState<sparePropsInter>();
+
+
+  async function encontrarSpare(text: any){
+    const resposta = await api.get(`/spare/one/${text}`);
+    setPropSpare({
+      col_descricao: resposta.data.col_descricao,
+      col_status: resposta.data.col_status
+    });
+  }
+
+  const perderFocoSpare = () =>{
+    setSuggestions([])
+  }
+
+  const [inputStatus, setInputStatus] = useState({
+    estado: true
+  })
+
+  const[tabelaKaban, setTabelaKaban] = useState<spareKabanInter[]>([])
+  
+  async function procurarBox(text: any){
+    const response = await api.get(`/spare/kaban`);
+    setTabelaKaban(response.data);
+    console.log(response.data);
+  }
+
+ 
+
+  
+//Modal Spare Parts ------------------------------------------------------------------------------------------------------------------------
+  
+
+const formRef = useRef<FormHandles>(null);
   const { numOcorrencia } = useParams<{numOcorrencia: string}>();
 
   const submitForm = useCallback(async(data: interfaceRegistro) => {
@@ -832,6 +1010,23 @@ const atenderOcorrencia: React.FC = () => {
     const valFim = new Date(fim.value);
     const diferenca = moment(valFim, "MM/DD/YYYY HH:mm:ss").diff(moment(valInicio, "MM/DD/YYYY HH:mm:ss"));
     const minutos = moment.duration(diferenca).asMinutes();
+
+    const dataAbertura = new Date((document.getElementById('aberturaID') as HTMLInputElement).value);
+    const difAbertura = moment(valInicio, "MM/DD/YYYY HH:mm").diff(moment(dataAbertura, "MM/DD/YYYY HH:mm"))
+    const minutosAbertura = moment.duration(difAbertura).asMinutes();
+    
+    if(minutosAbertura >= 0 ){      
+      setCorTempo({
+        cor: '#000000',
+      })
+    }else{
+      setCorTempo({
+        cor: '#ff0000',
+      })
+      toast.error('Tempo de Inicio Inferior a Abertura da Ocorrência');
+      return;
+    }  
+
     if(minutos >= 0 ){      
       setCorTempo({
         cor: '#000000',
@@ -983,7 +1178,7 @@ const atenderOcorrencia: React.FC = () => {
             <label>NUM OCORRÊNCIA:</label>
             <InputRef id='numOSID' className='numosdiv' name='numName'type='text' value={campos.col_numos} disabled/>
             <label>MI:</label>
-            <InputRef  className='midiv' name='miName'type='text' defaultValue={campos.col_mi} disabled/>
+            <InputRef  id='inputMI' className='midiv' name='miName'type='text' defaultValue={campos.col_mi} disabled/>
             <label>DATA/HORA OCORRÊNCIA:</label>
             <InputRef id='aberturaIDInput' name='inicioName'type='text' value={moment(campos.col_data_abertura).format("DD/MM/YYYY HH:mm:ss")} disabled />
             <label>TECNICO RESPONSAVEL:</label>
@@ -1082,10 +1277,10 @@ const atenderOcorrencia: React.FC = () => {
           </div>
           
           <div className='botaoDiv'>
-            <Button>CANCELAR</Button>
+            <Button onClick={loadSpare}>CANCELAR</Button>
             <Button type="submit">SALVAR</Button>
             <Button onClick={modalMaoObraTrue}>MÃO DE OBRA</Button>
-            <Button>PEÇAS</Button>
+            <Button onClick={modalSpareTrue}>PEÇAS</Button>
             <Button>MFR</Button>
             <Button>FINALIZAR</Button>
           
@@ -1136,6 +1331,71 @@ const atenderOcorrencia: React.FC = () => {
               </div>
             </div>
           </Modal> : null}
+
+        {modalSpare.modal ?
+          <Modal >
+            <div className='conteudoModalSpare'>
+              <div className='tituloModalSpare'>
+                <h1>PEÇAS</h1>
+                <Button onClick={modalSpareFalse}>X</Button>
+              </div> 
+              <div className='formDivSpare'>
+                <label>B.O.M.:</label>
+                <input autoComplete='off' className='bomInput' id='bomID' type='text' onBlur={() => {setTimeout(() => {perderFocoSpareBOM()}, 100)}} onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeSugestionBOM(e.target.value)}/>
+                <label>SPARE PARTS:</label>
+                <input autoComplete='off' className='spareInput' id='spareID' type='text' onBlur={() => {setTimeout(() => {perderFocoSpare()}, 100)}} onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeSugestion(e.target.value)} />
+                <label>STATUS:</label>
+                <input id='statusSpareID' className='statusInput' type='text' defaultValue={propSpare?.col_status} disabled/>
+                <label>PEÇA SUBST.:</label>
+                <div className='substDiv'><input className='substInput' type='checkbox'/></div>
+                <label>QNT.:</label>
+                <input className='qntInput' type='number' />
+              </div>
+              <div className='divDesc' autoCorrect='off'>
+                <label>DESC.:</label>
+                { propSpare?.col_status === '' ? (
+                  <input autoComplete='off' id='descriSpareID' className='descInput' type='text' defaultValue={''}/>
+                ):
+                <input id='descriSpareID' className='descInput' type='text' value={propSpare?.col_descricao} disabled/>               
+              }
+                
+              </div>
+              <div className='spareBox'>
+                <label>BOX:</label>
+
+                <select className='boxSpare'>
+                  <option >SELECIONE UM BOX DE MANUTENÇÃO</option>
+                {tabelaKaban.map(registro => (
+                    <option key={registro.col_id} value={registro.col_peca}>{registro.col_peca}</option>
+                  ))
+                }
+                </select>
+
+                <label>QNT.:</label>
+                <input className='qntSpare' disabled/>
+              </div>
+              <div className='listDivSpare'>
+                              
+              </div>
+            </div>
+            <div className='divSuggestionSpare'>            
+              {suggestions && suggestions.map((spare, i) =>                 
+                <div key={i} className='sugestaoSpare' onClick={() => aparecerSuggestion(spare.col_cod)}  >
+                  {spare.col_cod}
+                </div>                             
+              )}
+            </div> 
+            <div className='divSuggestionBOM'>            
+              {suggestionsBOM && suggestionsBOM.map((spare, i) =>                 
+                <div key={i} className='sugestaoBOM' onClick={() => aparecerSuggestionBOM(spare.col_peca)}  >
+                  {spare.col_peca}
+                </div>                             
+              )}
+            </div> 
+
+          </Modal> : null}
+           
+          
     </Container>
   );
 }

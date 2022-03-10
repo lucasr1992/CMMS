@@ -7,7 +7,7 @@ interface RequestInter{
   col_descricao: string,
   col_linha: string,
   col_area: number,
-  col_subarea: string,
+  col_subarea: number,
   col_classificacao: string,
   col_fabricante: string,
   col_modelo: string,
@@ -37,8 +37,6 @@ interface RequestInter{
   col_datasmp: Date,
   col_status: string,
 }
-
-
 
 
 @EntityRepository(cadastroMaquinastb)
@@ -237,7 +235,7 @@ maquinaRouter.post('/', async (request, response) => {
 
   return response.json(maquina);
 } catch(err) {
-  return response.status(400).json({  error: 'fudeu'});
+  return response.status(400).json({  error: 'Erro no Cadastro'});
 }
 });
 

@@ -110,11 +110,154 @@ export const Container = styled.div`
             width: 20px;
             cursor: pointer;
           }
-        }
-   
+        }  
+      }      
+    }
 
+    div.conteudoModalSpare{
+      width: 100%;
+      div.tituloModalSpare{
+        display: flex;      
+        width: 100%;
+        h1{
+          margin-left: 9px;
+          margin-top: 8px;
+        }
+        button{
+          margin-top: 8px;
+          margin-left: 87%;
+          width: 40px;
+          height: 40px;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
+        }
+      }
+      div.formDivSpare{
+        align-items:center;
+        display: flex ;
+        label{
+          margin-left: 10px;
+          margin-right: 3px;
+        }
+        input{
+          border-radius: 5px;
+          border: 2px solid black;
+        }
+        input.bomInput{
+          width: 160px;
+          height: 40px;
+          margin-right: 44px;
+        }
+        input.spareInput{
+          width: 160px;
+          height: 40px;
+          margin-right: 44px;
+        }
+        div.substDiv{
+          border: 2px solid black;
+          height: 40px;
+          padding: 3px;
+          border-radius: 5px;
+          input.substInput{
+            width: 30px;
+            height: 30px;
+          } 
+          margin-right: 44px;         
+        }
+        input.statusInput{
+          width: 160px;
+          height: 40px;
+          margin-right: 44px; 
+        }
+        
+        input.qntInput{
+          width: 90px;
+          height: 40px;
+        }
+      }
+      div.divDesc{
+        margin-top: 15px;
+        input{
+          border: 2px solid black;
+          width: 90%;
+          height: 40px;
+          border-radius: 5px;
+        }
+        label{
+          margin-left: 10px;
+          margin-right: 3px;
+        }
+      }
+      div.spareBox{
+        margin-top: 15px;
+        input{
+          width: 70px;
+          height: 40px;
+          border-radius: 5px;
+          border: 2px solid black;
+        }
+        select{
+          width: 300px;
+          height: 40px;
+          border-radius: 5px;
+          border: 2px solid black;
+          margin-left: 6px;
+          margin-right: 30px;
+        }
+        label{
+          margin-left: 10px;
+          margin-right: 5px;
+
+        }
       }
     }
+
+  div.divSuggestionSpare{   
+    position: absolute;
+    border: 1px solid black;
+    margin-top: 100px;
+    margin-left: 350px;
+    border-radius: 8px;
+    background-color: #fff;
+    div.sugestaoSpare{  
+      cursor: pointer;
+      border: 1px solid black;
+      margin-left: 5px;
+      margin-top: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      width: 80vh;
+      height: 35px;
+      background-color: #fff;
+      padding: 5px;
+      &:hover{
+          background-color: grey;
+      }
+    }
+  }
+
+  div.divSuggestionBOM{   
+    position: absolute;
+    border: 1px solid black;
+    margin-top: 100px;
+    margin-left: 60px;
+    border-radius: 8px;
+    background-color: #fff;
+    div.sugestaoBOM{  
+      cursor: pointer;
+      border: 1px solid black;
+      margin-left: 5px;
+      margin-top: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      width: 80vh;
+      height: 35px;
+      background-color: #fff;
+      padding: 5px;
+      &:hover{
+          background-color: grey;
+      }
+    }
+  }
    
 `;
 
@@ -377,7 +520,7 @@ export const MenuContent = styled.div `
       }
     }
 
-    
+        
   
 `;
 

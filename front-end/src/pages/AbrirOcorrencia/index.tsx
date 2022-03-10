@@ -68,8 +68,9 @@ const Ocorrencia: React.FC = () => {
   useEffect(() => {
     const loadUsers = async() => {
       const response = await api.get('/cadastromaquinas');
-      setMibd(response.data);
+      setMibd(response.data);      
     }
+    
     loadUsers();
     formatarData();
     formatarHora();
@@ -275,6 +276,10 @@ function perderFoco(){
   setFocoinput(false)
 }
 
+function codorna(){
+  toast.info("OI Mayara")
+}
+
 
 const focoInput =useCallback(() => {
   setFocoinput(true)
@@ -336,6 +341,7 @@ const focoInput =useCallback(() => {
             <Button onClick={goBack}>CANCELAR</Button>
             <Button onClick={resetarForm}>LIMPAR</Button>
           </div>
+         <input onChange={codorna}></input>
         </Form>
       </FormularioOcorrencia>
     </Container>

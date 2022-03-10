@@ -6,6 +6,7 @@ import autenticacaoDeUsuario from './Autenticacao.routes';
 import RotasOcorrencia from './ListaStatusMaquina.routes';
 import atenderOcorrencia from './AtenderOcorrencia.routes';
 import maoObraBD from './MaoObraBD.routes';
+import spareRoute from './spare.routes';
 
 
 
@@ -19,6 +20,7 @@ routes.use('/logmanutencao', autenticacaoDeUsuario);
 routes.use('/ocorrencias', RotasOcorrencia);
 routes.use('/atenderocorrencia', atenderOcorrencia);
 routes.use('/maoobrabd', maoObraBD);
+routes.use('/spare', spareRoute);
 
 
 export default routes;
