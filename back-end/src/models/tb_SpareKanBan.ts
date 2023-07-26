@@ -11,14 +11,14 @@ class tbSpareKanBan{
   col_peca: string;
 
   @ManyToOne(() => tbSpare)
-    @JoinColumn({ name: 'col_peca'})
+    @JoinColumn({ name: 'col_cod'})
     fk_cod_peca: tbSpare;
 
   @Column('int')
   col_subarea: number;
 
   @ManyToOne(() => tbSubarea)
-    @JoinColumn({ name: 'col_subarea'})
+    @JoinColumn({ name: 'col_id_subarea'})
     fk_subarea_peca: tbSubarea;
 
   @Column()

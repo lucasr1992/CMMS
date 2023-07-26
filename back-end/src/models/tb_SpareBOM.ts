@@ -11,14 +11,14 @@ class tbSpareBom{
   col_maquina: string;
 
   @ManyToOne(() => cadastroMaquinastb)
-    @JoinColumn({ name: 'col_maquina'})
+    @JoinColumn({ name: 'col_mi'})
     fk_maquina_cod: cadastroMaquinastb;
 
   @Column()
   col_peca: string;
 
   @ManyToOne(() => tbSpare)
-    @JoinColumn({ name: 'col_peca'})
+    @JoinColumn({ name: 'col_cod'})
     fk_spare_cod: tbSpare;
 
 }

@@ -11,14 +11,14 @@ class tbSpareBom{
   col_ocorrencia: number;
 
   @ManyToOne(() => tbCadastroOcorrencia)
-    @JoinColumn({ name: 'col_ocorrencia'})
+    @JoinColumn({ name: 'col_numos'})
     fk_ocorrencia_spare: tbCadastroOcorrencia;
 
   @Column()
   col_spare: string;
 
   @ManyToOne(() => tbSpare)
-    @JoinColumn({ name: 'col_spare'})
+    @JoinColumn({ name: 'col_cod'})
     fk_codspare_ocorrencia: tbSpare;
 
   @Column('int')
