@@ -20,7 +20,7 @@ class tbCadastroColaborador {
     col_area: number;
 
     @ManyToOne(() => tbArea)
-    @JoinColumn({ name: 'col_area'})
+    @JoinColumn({ name: 'col_id_area'})
     fk_aarea: tbArea;
 
     @Column('int')
@@ -51,7 +51,7 @@ class tbCadastroColaborador {
     col_subarea: number;
 
     @ManyToOne(() => tbSubarea)
-    @JoinColumn({ name: 'col_subarea'})
+    @JoinColumn({ name: 'col_id_subarea'})
     fk_ssubarea: tbSubarea;
 
 }

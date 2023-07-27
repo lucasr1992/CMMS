@@ -36,14 +36,7 @@ interface filtroArea{
 
 
 const menuManutencao: React.FC = () => {
- 
   const[tabela, setTabela] = useState<tabelaOcorrencia[]>([])
-  
-
-
-  
-
-
   const history = useHistory();
   const [ info, setInfo ]= useState<inforUsuario>({
     area: '',
@@ -71,6 +64,8 @@ const menuManutencao: React.FC = () => {
 
       const areaID = localStorage.getItem('@Manutencao:area');
       const subareaID= localStorage.getItem('@Manutencao:subarea');
+
+    
       const response = await api.get(`/ocorrencias/${areaID}/${subareaID}`)
       setTabela(response.data); 
 

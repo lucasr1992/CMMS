@@ -212,6 +212,7 @@ const aoClicar = useCallback(async (data: cadastroInter, { reset }) => { // o da
     }
      // cria um obijeto JSON concatenando dois objetos
    
+     
     const valoresInput = await api.post('/novaocorrencia', object).then((response) => {
       const dadosResposta = response.data    
       const ValorOS = dadosResposta['col_numos']; 
@@ -276,22 +277,12 @@ function perderFoco(){
   setFocoinput(false)
 }
 
-function codorna(){
-  toast.info("OI Mayara")
-}
 
 
 const focoInput =useCallback(() => {
   setFocoinput(true)
 
 }, [])
-
-
-
-
-
-
-//console.log(status);
 
 
   return(
@@ -341,7 +332,7 @@ const focoInput =useCallback(() => {
             <Button onClick={goBack}>CANCELAR</Button>
             <Button onClick={resetarForm}>LIMPAR</Button>
           </div>
-         <input onChange={codorna}></input>
+         
         </Form>
       </FormularioOcorrencia>
     </Container>

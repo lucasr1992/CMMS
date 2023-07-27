@@ -51,6 +51,7 @@ class MaquinasRepository extends Repository<cadastroMaquinastb> {
 }
 
 
+
 const maquinaRouter = Router();
 
 maquinaRouter.get('/', async (request, response) => {

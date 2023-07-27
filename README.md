@@ -12,14 +12,17 @@ CREATE SCHEMA `cmms` DEFAULT CHARACTER SET utf8 ;
 # SQL Tables Create (seguir a sequencia)
 CREATE TABLE `cmms`.`tb_area` (
   `col_id_area` INT NOT NULL AUTO_INCREMENT,
-  `tb_areacol` VARCHAR(80) NOT NULL,
+  `col_area` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`col_id_area`));
+INSERT INTO `cmms`.`tb_area` (`col_area`) VALUES ('MANUTENCAO PROFISSIONAL');
+INSERT INTO `cmms`.`tb_area` (`col_area`) VALUES ('PRODUÇÃO');
 
 
 CREATE TABLE `cmms`.`tb_subarea` (
   `col_id_subarea` INT NOT NULL AUTO_INCREMENT,
   `col_subarea` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`col_id_subarea`));
+INSERT INTO `cmms`.`tb_subarea` (`col_subarea`) VALUES ('TESTE');
 
 CREATE TABLE `cmms`.`tb_colaborador` (
   `col_registro` INT NOT NULL,
@@ -31,7 +34,7 @@ CREATE TABLE `cmms`.`tb_colaborador` (
   `col_cargo` VARCHAR(45) NOT NULL,
   `col_data_registro` DATETIME NULL,
   `col_revisao` DATETIME NULL,
-  `col_status` TINYINT NULL,
+  `col_status` VARCHAR(20) NULL,
   `col_foto` LONGTEXT NULL,
   `col_email` VARCHAR(250) NULL,
   `col_contato` VARCHAR(45) NULL,
@@ -49,6 +52,9 @@ CREATE TABLE `cmms`.`tb_colaborador` (
     REFERENCES `cmms`.`tb_subarea` (`col_id_subarea`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+INSERT INTO `cmms`.`tb_colaborador` (`col_registro`, `col_nome`, `col_senha`, `col_turno`, `col_area`, `col_nivel_acesso`, `col_cargo`, `col_subarea`) VALUES ('1111111', 'OPERADOR 1', '1234', '1', '2', '2', 'OPERADOR', '1');
+INSERT INTO `cmms`.`tb_colaborador` (`col_registro`, `col_nome`, `col_senha`, `col_turno`, `col_area`, `col_nivel_acesso`, `col_cargo`, `col_subarea`) VALUES ('2222222', 'TECNICO 1', '1234', '1', '1', '1', 'TECNICO', '1');
+
 
 CREATE TABLE `cmms`.`tb_maquinas` (
   `col_mi` VARCHAR(50) NOT NULL,
@@ -64,7 +70,7 @@ CREATE TABLE `cmms`.`tb_maquinas` (
   `col_numativo` VARCHAR(45) NULL,
   `col_tipo` VARCHAR(45) NULL,
   `col_familia` VARCHAR(45) NULL,
-  `col_valor` VARCHAR(45) NULL,
+  `col_valor` INT NULL,
   `col_datacompra` DATETIME NULL,
   `col_datasop` DATETIME NULL,
   `col_dataregistro` DATETIME NULL,
@@ -82,7 +88,8 @@ CREATE TABLE `cmms`.`tb_maquinas` (
   `col_dataspareparts` DATETIME NULL,
   `col_datasoftware` DATETIME NULL,
   `col_datacalendariopm` DATETIME NULL,
-  `col_datasmp` VARCHAR(45) NULL,
+  `col_datasmp` DATETIME NULL,
+  `col_status` VARCHAR(10) NULL,
   PRIMARY KEY (`col_mi`),
   INDEX `fk_area_idx` (`col_area` ASC) VISIBLE,
   INDEX `fk_subarea_idx` (`col_subarea` ASC) VISIBLE,
@@ -96,36 +103,34 @@ CREATE TABLE `cmms`.`tb_maquinas` (
     REFERENCES `cmms`.`tb_subarea` (`col_id_subarea`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+INSERT INTO `cmms`.`tb_maquinas` (`col_mi`, `col_descricao`, `col_linha`, `col_area`, `col_subarea`) VALUES ('HELI-001', 'MAQUINA DE USINAGEM', 'CORPO ECU', '2', '1');
+INSERT INTO `cmms`.`tb_maquinas` (`col_mi`, `col_descricao`, `col_linha`, `col_area`, `col_subarea`) VALUES ('BZTI-001', 'MAQUINA DE LAVAGEM', 'CORPO ECU', '2', '1');
+
 
 CREATE TABLE `cmms`.`tb_ocorrencia` (
-  `col_numos` INT NOT NULL,
-  `col_data_abertura` DATETIME NOT NULL,
-  `col_mi` VARCHAR(45) NOT NULL,
-  `col_maquinaparada` VARCHAR(45) NOT NULL,
+  `col_numos` INT NOT NULL AUTO_INCREMENT,
+  `col_data_abertura` DATETIME NULL,
+  `col_mi` VARCHAR(45) NULL,
+  `col_maquinaparada` VARCHAR(45) NULL,
   `col_seguranca` VARCHAR(45) NULL,
-  `col_problema` LONGTEXT NOT NULL,
-  `col_registro_operador` INT NOT NULL,
-  `col_tecnico` INT NOT NULL,
-  `col_tipo` VARCHAR(45) NOT NULL,
-  `col_natureza` VARCHAR(45) NOT NULL,
-  `col_raiz` VARCHAR(45) NOT NULL,
-  `col_atuacao` LONGTEXT NOT NULL,
+  `col_problema` LONGTEXT NULL,
+  `col_registro_operador` INT NULL,
+  `col_tecnico` INT NULL,
+  `col_tipo` VARCHAR(45) NULL,
+  `col_natureza` VARCHAR(45) NULL,
+  `col_raiz` VARCHAR(45) NULL,
+  `col_atuacao` LONGTEXT NULL,
   `col_obs` LONGTEXT NULL,
   `col_chegada` DATETIME NULL,
-  `col_diagnostico` DATETIME NOT NULL,
-  `col_desmontagem` DATETIME NOT NULL,
-  `col_peca` DATETIME NOT NULL,
-  `col_montagem` DATETIME NOT NULL,
-  `col_fim` DATETIME NOT NULL,
-  `col_status` VARCHAR(45) NOT NULL,
-  `col_MBD` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`col_numos`),
-  INDEX `fk_maquina_idx` (`col_mi` ASC) VISIBLE,
-  CONSTRAINT `fk_maquina`
-    FOREIGN KEY (`col_mi`)
-    REFERENCES `cmms`.`tb_maquinas` (`col_mi`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+  `col_diagnostico` DATETIME NULL,
+  `col_desmontagem` DATETIME NULL,
+  `col_peca` DATETIME NULL,
+  `col_montagem` DATETIME NULL,
+  `col_fim` DATETIME NULL,
+  `col_status` VARCHAR(45) NULL,
+  `col_MBD` VARCHAR(45) NULL,
+  PRIMARY KEY (`col_numos`)) AUTO_INCREMENT = 10000;
+
 
 CREATE TABLE `cmms`.`tb_maoobrabd` (
   `col_id` INT NOT NULL AUTO_INCREMENT,
@@ -239,3 +244,11 @@ compando npm run dev:server
 as configurações para o banco de dados esta no arquivo "ormconfig.json"
 a porta do servidor pode ser configurada no arquivo "src/server.ts" linha 36
 
+
+
+# Setup Front-End
+comando npm install
+
+
+# Iniciar o server 
+compando npm run start

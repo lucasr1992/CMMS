@@ -34,7 +34,6 @@ interface camposOcorrencia{
 
 class CadastrarOcorrencia {
     public async execute({
-
       col_data_abertura,
       col_mi,
       col_maquinaparada,
@@ -50,8 +49,8 @@ class CadastrarOcorrencia {
       if(verificacaoDuplicidade){
         throw new Error('Ja Existe esse Nome');
       }*/
-      const salvarOcorrencia = buscarNum.create({
 
+      const salvarOcorrencia = buscarNum.create({
         col_data_abertura,
         col_mi,
         col_maquinaparada,
@@ -59,10 +58,9 @@ class CadastrarOcorrencia {
         col_problema,
         col_registro_operador,
         col_status,
-
-
       });
 
+    
       await buscarNum.save(salvarOcorrencia);
       return salvarOcorrencia;
     }
@@ -87,11 +85,9 @@ abrirOcorrenciaRota.post('/', async (requisicao: Request, resposta: Response) =>
     .where('listaOcorrencia.col_status IN ("ABERTO", "EM ANDAMENTO") AND listaOcorrencia.col_mi = :col_mi', {col_mi})
     .getRawOne();
 
-
   if(verificar){
     const erro = JSON.parse(`{"Erro": "Maquina em Manutenção"}`)
     return resposta.json(erro);
-    throw new AppError('Maquina Lancada', 400);
   }
 
   const cadastrarInter = new CadastrarOcorrencia();
@@ -105,6 +101,7 @@ abrirOcorrenciaRota.post('/', async (requisicao: Request, resposta: Response) =>
     col_registro_operador,
     col_status,
   });
+  
 
   return resposta.json(cadastrar);
 })
